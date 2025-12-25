@@ -26,9 +26,7 @@ import (
 
 var store *bolt.BoltStore
 
-func getStore(configFile string) bool {
-	// Use the config file (global flag)
-	settings.Initialize(configFile)
+func getStore() bool {
 	s, hasDB, err := storage.InitializeDb(settings.Config.Server.Database)
 	if err != nil {
 		logger.Fatalf("could not load db info: %v", err)
@@ -55,6 +53,9 @@ func StartFilebrowser() {
 	if !keepGoing {
 		return
 	}
+	// Use the config file (global flag)
+	settings.Initialize(configPath)
+
 	if !settings.Config.Server.DisableUpdateCheck {
 		info, _ := utils.CheckForUpdates()
 		if info.LatestVersion != "" {
@@ -73,7 +74,7 @@ func StartFilebrowser() {
 
 	done := make(chan struct{})             // Signals server has stopped
 	shutdownComplete := make(chan struct{}) // Signals shutdown process is complete
-	dbExists := getStore(configPath)
+	dbExists := getStore()
 	database := fmt.Sprintf("Using existing database  : %v", settings.Config.Server.Database)
 	if !dbExists {
 		database = fmt.Sprintf("Creating new database    : %v", settings.Config.Server.Database)

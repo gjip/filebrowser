@@ -5,7 +5,7 @@ ifeq ($(OS),Windows_NT)
     SHELL := C:/Program Files/Git/bin/bash.exe
     .SHELLFLAGS := -ec
 else
-    SHELL := /bin/bash
+    SHELL := /usr/bin/env bash
 endif
 
 # git checkout remote branch PR
@@ -42,7 +42,7 @@ build-docker-slim:
 
 build-backend:
 	@echo "Building backend..."
-	cd backend && go build -o filebrowser --ldflags="-w -s -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.CommitSHA=testingCommit' -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.Version=testing'"
+	cd backend && go build -o filebrowser --ldflags="-w -s -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.CommitSHA=v1.1.0-stable' -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.Version=v1.1.0-stable'"
 	@echo "✓ Backend built successfully"
 
 # New dev target with hot-reloading for frontend and backend

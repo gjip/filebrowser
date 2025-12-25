@@ -91,14 +91,16 @@ func checkExecutable(providedPath, execName string) (string, error) {
 }
 
 func SetFFmpegPaths() {
-	ffmpegMainPath, err := CheckValidFFmpeg(settings.Env.FFmpegPath)
-	if err != nil && settings.Env.FFmpegPath != "" {
-		logger.Warningf("the configured ffmpeg path does not contain a valid ffmpeg binary %s, err: %v", settings.Env.FFmpegPath, err)
+	ffmpegMainPath, err := CheckValidFFmpeg(settings.Config.Integrations.Media.FfmpegPath)
+
+	if err != nil && settings.Config.Integrations.Media.FfmpegPath != "" {
+		logger.Warningf("the configured ffmpeg path does not contain a valid ffmpeg binary %s, err: %v", settings.Config.Integrations.Media.FfmpegPath, err)
 	}
-	ffprobePath, errprobe := CheckValidFFprobe(settings.Env.FFprobePath)
-	if errprobe != nil && settings.Env.FFprobePath != "" {
-		logger.Warningf("the configured ffmpeg path is not a valid ffprobe binary %s, err: %v", settings.Env.FFprobePath, err)
+	ffprobePath, errprobe := CheckValidFFprobe(settings.Config.Integrations.Media.FfmpegPath)
+	if errprobe != nil && settings.Config.Integrations.Media.FfmpegPath != "" {
+		logger.Warningf("the configured ffmpeg path does not contain a valid ffprobe binary %s, err: %v", settings.Config.Integrations.Media.FfmpegPath, err)
 	}
+
 	settings.Env.FFmpegPath = ffmpegMainPath
 	settings.Env.FFprobePath = ffprobePath
 }
