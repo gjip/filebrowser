@@ -50,6 +50,9 @@ func runCLI() bool {
 	// Parse global flags (before subcommands)
 	flag.Parse() // print generalUsage on error
 
+	// Use the config file (global flag)
+	settings.Initialize(configPath)
+
 	// Show help if requested
 	if help {
 		generalUsage()
@@ -94,14 +97,14 @@ func runCLI() bool {
 			}
 			switch subcommand {
 			case "-u":
-				err := setUser(dbConfig, asAdmin)
+				err := setUser(asAdmin)
 				if err != nil {
 					fmt.Printf("error: %v\n", err)
 					os.Exit(1)
 				}
 				return false
 			case "rule":
-				err := setRule(dbConfig, fsPath, indexPath, ruleCategory, value, allow)
+				err := setRule(fsPath, indexPath, ruleCategory, value, allow)
 				if err != nil {
 					fmt.Printf("error: %v\n", err)
 					os.Exit(1)
@@ -124,7 +127,7 @@ func runCLI() bool {
 	return true
 }
 
-func setRule(dbConfig, fsPath, indexPath, ruleCategory, value string, allow bool) error {
+func setRule(fsPath, indexPath, ruleCategory, value string, allow bool) error {
 	// Validate required parameters
 	if fsPath == "" {
 		return fmt.Errorf("real filesystem path is required: use -f <fsPath>")
@@ -139,8 +142,8 @@ func setRule(dbConfig, fsPath, indexPath, ruleCategory, value string, allow bool
 		return fmt.Errorf("value is required when ruleCategory is 'user' or 'group': use -v <username|groupname>")
 	}
 
-	// Initialize store and settings
-	_ = getStore(dbConfig) // ignore bool check
+	// Initialize store
+	_ = getStore() // ignore bool check
 
 	// Apply the rule based on allow flag and ruleCategory
 	var err error
@@ -182,7 +185,7 @@ func setRule(dbConfig, fsPath, indexPath, ruleCategory, value string, allow bool
 	return nil
 }
 
-func setUser(dbConfig string, asAdmin bool) error {
+func setUser(asAdmin bool) error {
 	if len(os.Args) < 4 {
 		return fmt.Errorf("missing username and password for 'set user'. Use 'set -u username,password'")
 	}
@@ -192,7 +195,7 @@ func setUser(dbConfig string, asAdmin bool) error {
 	}
 	username := userInfo[0]
 	password := userInfo[1]
-	_ = getStore(dbConfig) // ignore bool check
+	_ = getStore() // ignore bool check
 	user, err := store.Users.Get(username)
 	if err != nil {
 		newUser := users.User{

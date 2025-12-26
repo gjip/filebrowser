@@ -53,8 +53,6 @@ func StartFilebrowser() {
 	if !keepGoing {
 		return
 	}
-	// Use the config file (global flag)
-	settings.Initialize(configPath)
 
 	if !settings.Config.Server.DisableUpdateCheck {
 		info, _ := utils.CheckForUpdates()
